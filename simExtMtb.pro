@@ -3,7 +3,7 @@ include(config.pri)
 #QT -= core #core needed because of QProcess::startDetached
 QT -= gui
 
-TARGET = v_repExtMtb
+TARGET = simExtMtb
 TEMPLATE = lib
 
 DEFINES -= UNICODE
@@ -38,32 +38,32 @@ INCLUDEPATH += "../include"
 INCLUDEPATH += $$BOOST_INCLUDEPATH
 
 win32 {
-    DEFINES += WIN_VREP
+    DEFINES += WIN_SIM
     LIBS += -lwinmm
     LIBS += -lWs2_32
 }
 
 macx {
-    DEFINES += MAC_VREP
+    DEFINES += MAC_SIM
 }
 
 unix:!macx {
-    DEFINES += LIN_VREP
+    DEFINES += LIN_SIM
 }
 
 SOURCES += \
     ../common/socketOutConnection.cpp \
     ../common/scriptFunctionData.cpp \
     ../common/scriptFunctionDataItem.cpp \
-    ../common/v_repLib.cpp \
-    v_repExtMtb.cpp
+    ../common/simLib.cpp \
+    simExtMtb.cpp
 
 HEADERS +=\
     ../include/socketOutConnection.h \
     ../include/scriptFunctionData.h \
     ../include/scriptFunctionDataItem.h \
-    ../include/v_repLib.h \
-    v_repExtMtb.h
+    ../include/simLib.h \
+    simExtMtb.h
 
 unix:!symbian {
     maemo5 {
