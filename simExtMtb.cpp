@@ -1,4 +1,4 @@
-#include "simExtMtb.h"
+#include "simExtMTB.h"
 #include "simLib.h"
 #include "scriptFunctionData.h"
 #include "socketOutConnection.h"
@@ -637,48 +637,48 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
     simLib=loadSimLibrary(temp.c_str());
     if (simLib==NULL)
     {
-        printf("simExtMtb: error: could not find or correctly load the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
+        printf("simExtMTB: error: could not find or correctly load the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
         return(0); 
     }
     if (getSimProcAddresses(simLib)==0)
     {
-        printf("simExtMtb: error: could not find all required functions in the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
+        printf("simExtMTB: error: could not find all required functions in the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
         unloadSimLibrary(simLib);
         return(0);
     }
 
-    simRegisterScriptVariable("simMTB","require('simExtMtb')",0);
+    simRegisterScriptVariable("simMTB","require('simMTB')",0);
 
     // Register the new functions:
-    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","Mtb"),strConCat("number mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,number portNumber,charBuffer program,table_4 jointPositions, table_2 velocities)"),LUA_START_SERVER_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","Mtb"),strConCat("boolean result=",LUA_STOP_SERVER_COMMAND,"(number mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMAND,"@","Mtb"),strConCat("number result,string message=",LUA_STEP_COMMAND,"(number mtbServerHandle,number timeStep)"),LUA_STEP_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","Mtb"),strConCat("table_4 jointValues=",LUA_GET_JOINTS_COMMAND,"(number mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","Mtb"),strConCat("table_4 outputValues=",LUA_GET_OUTPUT_COMMAND,"(number mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","Mtb"),strConCat("table_4 inputValues=",LUA_GET_INPUT_COMMAND,"(number mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","Mtb"),strConCat("boolean result=",LUA_SET_INPUT_COMMAND,"(number mtbServerHandle,table_4 inputValues)"),LUA_SET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMAND,"@","Mtb"),strConCat("boolean result=",LUA_CONNECT_INPUT_COMMAND,"(number inputMtbServerHandle,number inputBitNumber,number outputMtbServerHandle,number outputBitNumber,number connectionType)"),LUA_CONNECT_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMAND,"@","Mtb"),strConCat("boolean result=",LUA_DISCONNECT_INPUT_COMMAND,"(number inputMtbServerHandle,number inputBitNumber)"),LUA_DISCONNECT_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("number mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,number portNumber,charBuffer program,table_4 jointPositions, table_2 velocities)"),LUA_START_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_STOP_SERVER_COMMAND,"(number mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMAND,"@","MTB"),strConCat("number result,string message=",LUA_STEP_COMMAND,"(number mtbServerHandle,number timeStep)"),LUA_STEP_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","MTB"),strConCat("table_4 jointValues=",LUA_GET_JOINTS_COMMAND,"(number mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","MTB"),strConCat("table_4 outputValues=",LUA_GET_OUTPUT_COMMAND,"(number mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","MTB"),strConCat("table_4 inputValues=",LUA_GET_INPUT_COMMAND,"(number mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_SET_INPUT_COMMAND,"(number mtbServerHandle,table_4 inputValues)"),LUA_SET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_CONNECT_INPUT_COMMAND,"(number inputMtbServerHandle,number inputBitNumber,number outputMtbServerHandle,number outputBitNumber,number connectionType)"),LUA_CONNECT_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_DISCONNECT_INPUT_COMMAND,"(number inputMtbServerHandle,number inputBitNumber)"),LUA_DISCONNECT_INPUT_CALLBACK);
 
     // Following for backward compatibility:
     simRegisterScriptVariable(LUA_START_SERVER_COMMANDOLD,LUA_START_SERVER_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_START_SERVER_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_START_SERVER_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_STOP_SERVER_COMMANDOLD,LUA_STOP_SERVER_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_STOP_SERVER_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_STOP_SERVER_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_STEP_COMMANDOLD,LUA_STEP_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_STEP_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_STEP_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_GET_JOINTS_COMMANDOLD,LUA_GET_JOINTS_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_GET_JOINTS_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_GET_JOINTS_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_GET_OUTPUT_COMMANDOLD,LUA_GET_OUTPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_GET_OUTPUT_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_GET_OUTPUT_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_GET_INPUT_COMMANDOLD,LUA_GET_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_GET_INPUT_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_GET_INPUT_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_SET_INPUT_COMMANDOLD,LUA_SET_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_SET_INPUT_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_SET_INPUT_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_CONNECT_INPUT_COMMANDOLD,LUA_CONNECT_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_CONNECT_INPUT_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_CONNECT_INPUT_COMMAND," notation instead"),0);
     simRegisterScriptVariable(LUA_DISCONNECT_INPUT_COMMANDOLD,LUA_DISCONNECT_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMANDOLD,"@","Mtb"),strConCat("Please use the ",LUA_DISCONNECT_INPUT_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_DISCONNECT_INPUT_COMMAND," notation instead"),0);
 
     return(PLUGIN_VERSION);
 }

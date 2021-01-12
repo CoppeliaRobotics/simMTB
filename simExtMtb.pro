@@ -3,7 +3,7 @@ include(config.pri)
 #QT -= core #core needed because of QProcess::startDetached
 QT -= gui
 
-TARGET = simExtMtb
+TARGET = simExtMTB
 TEMPLATE = lib
 
 DEFINES -= UNICODE
@@ -56,14 +56,14 @@ SOURCES += \
     ../common/scriptFunctionData.cpp \
     ../common/scriptFunctionDataItem.cpp \
     ../common/simLib.cpp \
-    simExtMtb.cpp
+    simExtMTB.cpp
 
 HEADERS +=\
     ../include/socketOutConnection.h \
     ../include/scriptFunctionData.h \
     ../include/scriptFunctionDataItem.h \
     ../include/simLib.h \
-    simExtMtb.h
+    simExtMTB.h
 
 unix:!symbian {
     maemo5 {
