@@ -26,16 +26,10 @@
     #define _stricmp(x,y) strcasecmp(x,y)
 #endif
 
-#define PLUGIN_VERSION 9
-                // version 1 was for CoppeliaSim 2.5.11 or earlier
-                // version 2 was for CoppeliaSim versions before CoppeliaSim 2.6.0
-                // version 3 was for CoppeliaSim versions before CoppeliaSim 2.6.7
-                // version 4 is the Qt version
-                // version 5 is from 10/1/2014
-                // version 6 is after CoppeliaSim 3.1.3
-                // version 7 is after CoppeliaSim 3.2.0. Completely rewritten.
+#define PLUGIN_VERSION 10
                 // version 8 is after CoppeliaSim 3.3.0. Using stacks to exchange data with scripts.
                 // version 9 is after CoppeliaSim 3.4.0. Using the new API notation.
+                // version 10 is after CoppeliaSim 4.2.0.
 
 #define CONCAT(x,y,z) x y z
 #define strConCat(x,y,z)    CONCAT(x,y,z)
@@ -46,6 +40,7 @@ struct sMtbServer
 {
     CSocketOutConnection* connection;
     int mtbServerHandle;
+    int scriptHandle;
     float jointPositions[4];
     unsigned char robotInput[4];
     unsigned char robotOutput[4];
@@ -65,6 +60,16 @@ int getServerIndexFromServerHandle(int serverHandle)
     for (unsigned int i=0;i<allMtbServers.size();i++)
     {
         if (allMtbServers[i].mtbServerHandle==serverHandle)
+            return(i);
+    }
+    return(-1);
+}
+
+int getServerIndexFromScriptHandle(int h)
+{
+    for (unsigned int i=0;i<allMtbServers.size();i++)
+    {
+        if (allMtbServers[i].scriptHandle==h)
             return(i);
     }
     return(-1);
@@ -246,6 +251,7 @@ void LUA_START_SERVER_CALLBACK(SScriptCallBack* p)
                         sMtbServer server;
                         server.connection=connection;
                         server.mtbServerHandle=handle;
+                        server.scriptHandle=p->scriptID;
                         for (unsigned int i=0;i<4;i++)
                             server.jointPositions[i]=inData->at(3).floatData[i];
                         for (unsigned int i=0;i<4;i++)
@@ -607,9 +613,8 @@ void LUA_DISCONNECT_INPUT_CALLBACK(SScriptCallBack* p)
 }
 // --------------------------------------------------------------------------------------
 
-SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
+SIM_DLLEXPORT unsigned char simStart(void*,int)
 {
-    // 1. Figure out this plugin's directory:
     char curDirAndFile[1024];
 #ifdef _WIN32
     #ifdef QT_COMPIL
@@ -623,7 +628,6 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
 #endif
     currentDirAndPath=curDirAndFile;
 
-    // 2. Append the CoppeliaSim library's name:
     std::string temp(currentDirAndPath);
 #ifdef _WIN32
     temp+="\\coppeliaSim.dll";
@@ -633,7 +637,6 @@ SIM_DLLEXPORT unsigned char simStart(void* reservedPointer,int reservedInt)
     temp+="/libcoppeliaSim.dylib";
 #endif 
 
-    // 3. Load the CoppeliaSim library:
     simLib=loadSimLibrary(temp.c_str());
     if (simLib==NULL)
     {
@@ -688,24 +691,20 @@ SIM_DLLEXPORT void simEnd()
     unloadSimLibrary(simLib);
 }
 
-SIM_DLLEXPORT void* simMessage(int message,int* auxiliaryData,void* customData,int* replyData)
-{ // This is called quite often. Just watch out for messages/events you want to handle
-    // Keep following 5 lines at the beginning and unchanged:
-    int errorModeSaved;
-    simGetIntegerParameter(sim_intparam_error_report_mode,&errorModeSaved);
-    simSetIntegerParameter(sim_intparam_error_report_mode,sim_api_errormessage_ignore);
+SIM_DLLEXPORT void* simMessage(int message,int* auxiliaryData,void*,int*)
+{
     void* retVal=NULL;
 
-    if (message==sim_message_eventcallback_simulationended)
-    { // simulation ended. End all started MTB servers:
-        for (unsigned int i=0;i<allMtbServers.size();i++)
-            delete allMtbServers[i].connection;
-        allMtbServers.clear();
+    if (message==sim_message_eventcallback_scriptstatedestroyed)
+    { // script state was destroyed. Destroy all associated server instances:
+        int index=getServerIndexFromScriptHandle(auxiliaryData[0]);
+        while (index>=0)
+        {
+            allMtbServers.erase(allMtbServers.begin()+index);
+            index=getServerIndexFromScriptHandle(auxiliaryData[0]);
+        }
     }
 
-
-    // Keep following unchanged:
-    simSetIntegerParameter(sim_intparam_error_report_mode,errorModeSaved);
     return(retVal);
 }
 

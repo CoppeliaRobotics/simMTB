@@ -2,10 +2,10 @@
 
 #ifdef _WIN32
     #define SIM_DLLEXPORT extern "C" __declspec(dllexport)
-#endif /* _WIN32 */
+#endif
 #if defined (__linux) || defined (__APPLE__)
     #define SIM_DLLEXPORT extern "C"
-#endif /* __linux || __APPLE__ */
+#endif
 
 
 // The 3 required entry points of the CoppeliaSim plugin:
