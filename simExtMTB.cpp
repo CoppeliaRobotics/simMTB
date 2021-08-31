@@ -650,8 +650,6 @@ SIM_DLLEXPORT unsigned char simStart(void*,int)
         return(0);
     }
 
-    simRegisterScriptVariable("simMTB","require('simMTB')",0);
-
     // Register the new functions:
     simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("number mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,number portNumber,charBuffer program,table_4 jointPositions, table_2 velocities)"),LUA_START_SERVER_CALLBACK);
     simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_STOP_SERVER_COMMAND,"(number mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
