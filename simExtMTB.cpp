@@ -651,15 +651,15 @@ SIM_DLLEXPORT unsigned char simStart(void*,int)
     }
 
     // Register the new functions:
-    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("number mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,number portNumber,charBuffer program,table_4 jointPositions, table_2 velocities)"),LUA_START_SERVER_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_STOP_SERVER_COMMAND,"(number mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMAND,"@","MTB"),strConCat("number result,string message=",LUA_STEP_COMMAND,"(number mtbServerHandle,number timeStep)"),LUA_STEP_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","MTB"),strConCat("table_4 jointValues=",LUA_GET_JOINTS_COMMAND,"(number mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","MTB"),strConCat("table_4 outputValues=",LUA_GET_OUTPUT_COMMAND,"(number mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","MTB"),strConCat("table_4 inputValues=",LUA_GET_INPUT_COMMAND,"(number mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_SET_INPUT_COMMAND,"(number mtbServerHandle,table_4 inputValues)"),LUA_SET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_CONNECT_INPUT_COMMAND,"(number inputMtbServerHandle,number inputBitNumber,number outputMtbServerHandle,number outputBitNumber,number connectionType)"),LUA_CONNECT_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMAND,"@","MTB"),strConCat("boolean result=",LUA_DISCONNECT_INPUT_COMMAND,"(number inputMtbServerHandle,number inputBitNumber)"),LUA_DISCONNECT_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("int mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,int portNumber,charBuffer program,table_4 jointPositions, table_2 velocities)"),LUA_START_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","MTB"),strConCat("bool result=",LUA_STOP_SERVER_COMMAND,"(int mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMAND,"@","MTB"),strConCat("int result,string message=",LUA_STEP_COMMAND,"(int mtbServerHandle,float timeStep)"),LUA_STEP_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","MTB"),strConCat("table_4 jointValues=",LUA_GET_JOINTS_COMMAND,"(int mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","MTB"),strConCat("table_4 outputValues=",LUA_GET_OUTPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","MTB"),strConCat("table_4 inputValues=",LUA_GET_INPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_SET_INPUT_COMMAND,"(int mtbServerHandle,table_4 inputValues)"),LUA_SET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_CONNECT_INPUT_COMMAND,"(int inputMtbServerHandle,int inputBitNumber,int outputMtbServerHandle,int outputBitNumber,int connectionType)"),LUA_CONNECT_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_DISCONNECT_INPUT_COMMAND,"(int inputMtbServerHandle,int inputBitNumber)"),LUA_DISCONNECT_INPUT_CALLBACK);
 
     // Following for backward compatibility:
     simRegisterScriptVariable(LUA_START_SERVER_COMMANDOLD,LUA_START_SERVER_COMMAND,-1);
