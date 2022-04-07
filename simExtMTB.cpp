@@ -26,10 +26,11 @@
     #define _stricmp(x,y) strcasecmp(x,y)
 #endif
 
-#define PLUGIN_VERSION 10
+#define PLUGIN_VERSION 11
                 // version 8 is after CoppeliaSim 3.3.0. Using stacks to exchange data with scripts.
                 // version 9 is after CoppeliaSim 3.4.0. Using the new API notation.
                 // version 10 is after CoppeliaSim 4.2.0.
+                // version 11 is after CoppeliaSim 4.3.0.
 
 #define CONCAT(x,y,z) x y z
 #define strConCat(x,y,z)    CONCAT(x,y,z)
@@ -651,13 +652,13 @@ SIM_DLLEXPORT unsigned char simStart(void*,int)
     }
 
     // Register the new functions:
-    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("int mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,int portNumber,charBuffer program,table_4 jointPositions, table_2 velocities)"),LUA_START_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("int mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,int portNumber,buffer program,float[4] jointPositions, float[2] velocities)"),LUA_START_SERVER_CALLBACK);
     simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","MTB"),strConCat("bool result=",LUA_STOP_SERVER_COMMAND,"(int mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
     simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMAND,"@","MTB"),strConCat("int result,string message=",LUA_STEP_COMMAND,"(int mtbServerHandle,float timeStep)"),LUA_STEP_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","MTB"),strConCat("table_4 jointValues=",LUA_GET_JOINTS_COMMAND,"(int mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","MTB"),strConCat("table_4 outputValues=",LUA_GET_OUTPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","MTB"),strConCat("table_4 inputValues=",LUA_GET_INPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_SET_INPUT_COMMAND,"(int mtbServerHandle,table_4 inputValues)"),LUA_SET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","MTB"),strConCat("float[4] jointValues=",LUA_GET_JOINTS_COMMAND,"(int mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","MTB"),strConCat("int[4] outputValues=",LUA_GET_OUTPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","MTB"),strConCat("int[4] inputValues=",LUA_GET_INPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_SET_INPUT_COMMAND,"(int mtbServerHandle,int[4] inputValues)"),LUA_SET_INPUT_CALLBACK);
     simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_CONNECT_INPUT_COMMAND,"(int inputMtbServerHandle,int inputBitNumber,int outputMtbServerHandle,int outputBitNumber,int connectionType)"),LUA_CONNECT_INPUT_CALLBACK);
     simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_DISCONNECT_INPUT_COMMAND,"(int inputMtbServerHandle,int inputBitNumber)"),LUA_DISCONNECT_INPUT_CALLBACK);
 
