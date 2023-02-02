@@ -21,7 +21,7 @@ coppeliasim_add_plugin(
     LEGACY
     SOURCES
     simExtMTB.cpp
-    ${COPPELIASIM_COMMON_DIR}/socketOutConnection.cpp
-    ${COPPELIASIM_COMMON_DIR}/scriptFunctionData.cpp
-    ${COPPELIASIM_COMMON_DIR}/scriptFunctionDataItem.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/socketOutConnection.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/scriptFunctionData.cpp
+    ${COPPELIASIM_INCLUDE_DIR}/scriptFunctionDataItem.cpp
 )
