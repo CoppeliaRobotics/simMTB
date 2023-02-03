@@ -1,7 +1,7 @@
 #include "simExtMTB.h"
-#include "simLib.h"
-#include "scriptFunctionData.h"
-#include "socketOutConnection.h"
+#include <simLib.h>
+#include <scriptFunctionData.h>
+#include <socketOutConnection.h>
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 
