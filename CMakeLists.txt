@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(simExtMTB)
+project(simMTB)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MACOSX_RPATH 1)
@@ -17,11 +17,13 @@ list(APPEND CMAKE_MODULE_PATH ${COPPELIASIM_INCLUDE_DIR}/cmake)
 find_package(CoppeliaSim 4.5.0.0 REQUIRED)
 
 coppeliasim_add_plugin(
-    simExtMTB
+    simMTB
     LEGACY
     SOURCES
-    simExtMTB.cpp
+    simMTB.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simLib/socketOutConnection.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simLib/scriptFunctionData.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simLib/scriptFunctionDataItem.cpp
 )
+coppeliasim_add_lua(simMTB.lua)
+coppeliasim_add_lua(simMTB-ce.lua)

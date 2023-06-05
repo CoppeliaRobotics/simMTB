@@ -1,4 +1,4 @@
-#include "simExtMTB.h"
+#include "simMTB.h"
 #include <simLib/simLib.h>
 #include <simLib/scriptFunctionData.h>
 #include <simLib/socketOutConnection.h>
@@ -26,14 +26,12 @@
     #define _stricmp(x,y) strcasecmp(x,y)
 #endif
 
-#define PLUGIN_VERSION 11
+#define PLUGIN_VERSION 12
                 // version 8 is after CoppeliaSim 3.3.0. Using stacks to exchange data with scripts.
                 // version 9 is after CoppeliaSim 3.4.0. Using the new API notation.
                 // version 10 is after CoppeliaSim 4.2.0.
                 // version 11 is after CoppeliaSim 4.3.0.
-
-#define CONCAT(x,y,z) x y z
-#define strConCat(x,y,z)    CONCAT(x,y,z)
+                // version 12 is after CoppeliaSim 4.5.1.
 
 LIBRARY simLib;
 
@@ -161,23 +159,10 @@ bool addOutputInputConnection(int inputIndex,int inputBit,int outputIndex,int ou
     return(true);
 }
 
-// Follwing for backward compatibility:
-#define LUA_START_SERVER_COMMANDOLD "simExtMtb_startServer"
-#define LUA_STOP_SERVER_COMMANDOLD "simExtMtb_stopServer"
-#define LUA_DISCONNECT_INPUT_COMMANDOLD "simExtMtb_disconnectInput"
-#define LUA_CONNECT_INPUT_COMMANDOLD "simExtMtb_connectInput"
-#define LUA_SET_INPUT_COMMANDOLD "simExtMtb_setInput"
-#define LUA_GET_INPUT_COMMANDOLD "simExtMtb_getInput"
-#define LUA_GET_OUTPUT_COMMANDOLD "simExtMtb_getOutput"
-#define LUA_GET_JOINTS_COMMANDOLD "simExtMtb_getJoints"
-#define LUA_STEP_COMMANDOLD "simExtMtb_step"
-
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_startServer
+// simMTB.startServer
 // --------------------------------------------------------------------------------------
-#define LUA_START_SERVER_COMMAND "simMTB.startServer"
-
 const int inArgs_START_SERVER[]={
     5,
     sim_script_arg_string,0,
@@ -192,7 +177,7 @@ void LUA_START_SERVER_CALLBACK(SScriptCallBack* p)
     CScriptFunctionData D;
     int handle=-1; // means error
     std::string msg("Problem launching or communicating with the MTB server.");
-    if (D.readDataFromStack(p->stackID,inArgs_START_SERVER,inArgs_START_SERVER[0],LUA_START_SERVER_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_START_SERVER,inArgs_START_SERVER[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         std::string mtbServerExecutableName(inData->at(0).stringData[0]);
@@ -273,19 +258,19 @@ void LUA_START_SERVER_CALLBACK(SScriptCallBack* p)
                 else
                 {
                     delete connection;
-                    simSetLastError(LUA_START_SERVER_COMMAND,"Failed to receive data from the MTB server.");
+                    simSetLastError(nullptr,"Failed to receive data from the MTB server.");
                 }
             }
             else
             {
                 delete connection;
-                simSetLastError(LUA_START_SERVER_COMMAND,"Failed to send data to the MTB server.");
+                simSetLastError(nullptr,"Failed to send data to the MTB server.");
             }
         }
         else
         {
             delete connection;
-            simSetLastError(LUA_START_SERVER_COMMAND,"Failed to start or connect to MTB server.");
+            simSetLastError(nullptr,"Failed to start or connect to MTB server.");
         }
             
     }
@@ -302,10 +287,8 @@ void LUA_START_SERVER_CALLBACK(SScriptCallBack* p)
 
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_stopServer
+// simMTB.stopServer
 // --------------------------------------------------------------------------------------
-#define LUA_STOP_SERVER_COMMAND "simMTB.stopServer"
-
 const int inArgs_STOP_SERVER[]={
     1,
     sim_script_arg_int32,0,
@@ -315,7 +298,7 @@ void LUA_STOP_SERVER_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     bool success=false;
-    if (D.readDataFromStack(p->stackID,inArgs_STOP_SERVER,inArgs_STOP_SERVER[0],LUA_STOP_SERVER_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_STOP_SERVER,inArgs_STOP_SERVER[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int serverHandle=inData->at(0).int32Data[0];
@@ -328,7 +311,7 @@ void LUA_STOP_SERVER_CALLBACK(SScriptCallBack* p)
             success=true;
         }
         else
-            simSetLastError(LUA_STOP_SERVER_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     D.pushOutData(CScriptFunctionDataItem(success));
     D.writeDataToStack(p->stackID);
@@ -336,10 +319,8 @@ void LUA_STOP_SERVER_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_step
+// simMTB.step
 // --------------------------------------------------------------------------------------
-#define LUA_STEP_COMMAND "simMTB.step"
-
 const int inArgs_STEP[]={
     2,
     sim_script_arg_int32,0,
@@ -351,7 +332,7 @@ void LUA_STEP_CALLBACK(SScriptCallBack* p)
     CScriptFunctionData D;
     std::string msg("Invalid MTB server handle, or problem communicating with the MTB server.");
     int result=-1;
-    if (D.readDataFromStack(p->stackID,inArgs_STEP,inArgs_STEP[0],LUA_STEP_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_STEP,inArgs_STEP[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int serverHandle=inData->at(0).int32Data[0];
@@ -388,13 +369,13 @@ void LUA_STEP_CALLBACK(SScriptCallBack* p)
                     delete[] data;
                 }
                 else
-                    simSetLastError(LUA_STEP_COMMAND,"Failed to receive data from the MTB server.");
+                    simSetLastError(nullptr,"Failed to receive data from the MTB server.");
             }
             else
-                simSetLastError(LUA_STEP_COMMAND,"Failed to send data to the MTB server.");
+                simSetLastError(nullptr,"Failed to send data to the MTB server.");
         }
         else
-            simSetLastError(LUA_STEP_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     else
         msg="Wrong or missing arguments.";
@@ -405,10 +386,8 @@ void LUA_STEP_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_getJoints
+// simMTB.getJoints
 // --------------------------------------------------------------------------------------
-#define LUA_GET_JOINTS_COMMAND "simMTB.getJoints"
-
 const int inArgs_GET_JOINTS[]={
     1,
     sim_script_arg_int32,0,
@@ -418,7 +397,7 @@ void LUA_GET_JOINTS_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     std::vector<float> joints;
-    if (D.readDataFromStack(p->stackID,inArgs_GET_JOINTS,inArgs_GET_JOINTS[0],LUA_GET_JOINTS_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_GET_JOINTS,inArgs_GET_JOINTS[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int serverHandle=inData->at(0).int32Data[0];
@@ -429,7 +408,7 @@ void LUA_GET_JOINTS_CALLBACK(SScriptCallBack* p)
                 joints.push_back(allMtbServers[index].jointPositions[i]);
         }
         else
-            simSetLastError(LUA_GET_JOINTS_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     if (joints.size()!=0)
         D.pushOutData(CScriptFunctionDataItem(joints));
@@ -438,10 +417,8 @@ void LUA_GET_JOINTS_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_getOutput
+// simMTB.getOutput
 // --------------------------------------------------------------------------------------
-#define LUA_GET_OUTPUT_COMMAND "simMTB.getOutput"
-
 const int inArgs_GET_OUTPUT[]={
     1,
     sim_script_arg_int32,0,
@@ -451,7 +428,7 @@ void LUA_GET_OUTPUT_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     std::vector<int> output;
-    if (D.readDataFromStack(p->stackID,inArgs_GET_OUTPUT,inArgs_GET_OUTPUT[0],LUA_GET_OUTPUT_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_GET_OUTPUT,inArgs_GET_OUTPUT[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int serverHandle=inData->at(0).int32Data[0];
@@ -462,7 +439,7 @@ void LUA_GET_OUTPUT_CALLBACK(SScriptCallBack* p)
                 output.push_back(allMtbServers[index].robotOutput[i]);
         }
         else
-            simSetLastError(LUA_GET_OUTPUT_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     if (output.size()!=0)
         D.pushOutData(CScriptFunctionDataItem(output));
@@ -471,10 +448,8 @@ void LUA_GET_OUTPUT_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_getInput
+// simMTB.getInput
 // --------------------------------------------------------------------------------------
-#define LUA_GET_INPUT_COMMAND "simMTB.getInput"
-
 const int inArgs_GET_INPUT[]={
     1,
     sim_script_arg_int32,0,
@@ -484,7 +459,7 @@ void LUA_GET_INPUT_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     std::vector<int> input;
-    if (D.readDataFromStack(p->stackID,inArgs_GET_INPUT,inArgs_GET_INPUT[0],LUA_GET_INPUT_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_GET_INPUT,inArgs_GET_INPUT[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int serverHandle=inData->at(0).int32Data[0];
@@ -495,7 +470,7 @@ void LUA_GET_INPUT_CALLBACK(SScriptCallBack* p)
                 input.push_back(allMtbServers[index].robotInput[i]);
         }
         else
-            simSetLastError(LUA_GET_INPUT_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     if (input.size()!=0)
         D.pushOutData(CScriptFunctionDataItem(input));
@@ -504,10 +479,8 @@ void LUA_GET_INPUT_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_setInput
+// simMTB.setInput
 // --------------------------------------------------------------------------------------
-#define LUA_SET_INPUT_COMMAND "simMTB.setInput"
-
 const int inArgs_SET_INPUT[]={
     2,
     sim_script_arg_int32,0,
@@ -518,7 +491,7 @@ void LUA_SET_INPUT_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     bool result=false;
-    if (D.readDataFromStack(p->stackID,inArgs_SET_INPUT,inArgs_SET_INPUT[0],LUA_SET_INPUT_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_SET_INPUT,inArgs_SET_INPUT[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int serverHandle=inData->at(0).int32Data[0];
@@ -531,7 +504,7 @@ void LUA_SET_INPUT_CALLBACK(SScriptCallBack* p)
             result=true;
         }
         else
-            simSetLastError(LUA_SET_INPUT_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     D.pushOutData(CScriptFunctionDataItem(result));
     D.writeDataToStack(p->stackID);
@@ -539,10 +512,8 @@ void LUA_SET_INPUT_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_connectInput
+// simMTB.connectInput
 // --------------------------------------------------------------------------------------
-#define LUA_CONNECT_INPUT_COMMAND "simMTB.connectInput"
-
 const int inArgs_CONNECT_INPUT[]={
     5,
     sim_script_arg_int32,0,
@@ -556,7 +527,7 @@ void LUA_CONNECT_INPUT_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     bool result=false;
-    if (D.readDataFromStack(p->stackID,inArgs_CONNECT_INPUT,inArgs_CONNECT_INPUT[0],LUA_CONNECT_INPUT_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_CONNECT_INPUT,inArgs_CONNECT_INPUT[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int inputServerHandle=inData->at(0).int32Data[0];
@@ -572,7 +543,7 @@ void LUA_CONNECT_INPUT_CALLBACK(SScriptCallBack* p)
             updateAllInputs();
         }
         else
-            simSetLastError(LUA_CONNECT_INPUT_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     D.pushOutData(CScriptFunctionDataItem(result));
     D.writeDataToStack(p->stackID);
@@ -580,10 +551,8 @@ void LUA_CONNECT_INPUT_CALLBACK(SScriptCallBack* p)
 // --------------------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------------------
-// simExtMtb_disconnectInput
+// simMTB.disconnectInput
 // --------------------------------------------------------------------------------------
-#define LUA_DISCONNECT_INPUT_COMMAND "simMTB.disconnectInput"
-
 const int inArgs_DISCONNECT_INPUT[]={
     2,
     sim_script_arg_int32,0,
@@ -594,7 +563,7 @@ void LUA_DISCONNECT_INPUT_CALLBACK(SScriptCallBack* p)
 {
     CScriptFunctionData D;
     bool result=false;
-    if (D.readDataFromStack(p->stackID,inArgs_DISCONNECT_INPUT,inArgs_DISCONNECT_INPUT[0],LUA_DISCONNECT_INPUT_COMMAND))
+    if (D.readDataFromStack(p->stackID,inArgs_DISCONNECT_INPUT,inArgs_DISCONNECT_INPUT[0],nullptr))
     {
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int inputServerHandle=inData->at(0).int32Data[0];
@@ -607,14 +576,14 @@ void LUA_DISCONNECT_INPUT_CALLBACK(SScriptCallBack* p)
             result=true;
         }
         else
-            simSetLastError(LUA_DISCONNECT_INPUT_COMMAND,"Invalid MTB server handle.");
+            simSetLastError(nullptr,"Invalid MTB server handle.");
     }
     D.pushOutData(CScriptFunctionDataItem(result));
     D.writeDataToStack(p->stackID);
 }
 // --------------------------------------------------------------------------------------
 
-SIM_DLLEXPORT unsigned char simStart(void*,int)
+SIM_DLLEXPORT int simInit(const char* pluginName)
 {
     char curDirAndFile[1024];
 #ifdef _WIN32
@@ -641,69 +610,45 @@ SIM_DLLEXPORT unsigned char simStart(void*,int)
     simLib=loadSimLibrary(temp.c_str());
     if (simLib==NULL)
     {
-        printf("simExtMTB: error: could not find or correctly load the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
+        simAddLog(pluginName,sim_verbosity_errors,"could not find or correctly load the CoppeliaSim library. Cannot start the plugin.");
         return(0); 
     }
     if (getSimProcAddresses(simLib)==0)
     {
-        printf("simExtMTB: error: could not find all required functions in the CoppeliaSim library. Cannot start the plugin.\n"); // cannot use simAddLog here.
+        simAddLog(pluginName,sim_verbosity_errors,"could not find all required functions in the CoppeliaSim library. Cannot start the plugin.");
         unloadSimLibrary(simLib);
         return(0);
     }
 
     // Register the new functions:
-    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMAND,"@","MTB"),strConCat("int mtbServerHandle,string message=",LUA_START_SERVER_COMMAND,"(string mtbServerExecutable,int portNumber,buffer program,float[4] jointPositions, float[2] velocities)"),LUA_START_SERVER_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMAND,"@","MTB"),strConCat("bool result=",LUA_STOP_SERVER_COMMAND,"(int mtbServerHandle)"),LUA_STOP_SERVER_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMAND,"@","MTB"),strConCat("int result,string message=",LUA_STEP_COMMAND,"(int mtbServerHandle,float timeStep)"),LUA_STEP_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMAND,"@","MTB"),strConCat("float[4] jointValues=",LUA_GET_JOINTS_COMMAND,"(int mtbServerHandle)"),LUA_GET_JOINTS_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMAND,"@","MTB"),strConCat("int[4] outputValues=",LUA_GET_OUTPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_OUTPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMAND,"@","MTB"),strConCat("int[4] inputValues=",LUA_GET_INPUT_COMMAND,"(int mtbServerHandle)"),LUA_GET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_SET_INPUT_COMMAND,"(int mtbServerHandle,int[4] inputValues)"),LUA_SET_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_CONNECT_INPUT_COMMAND,"(int inputMtbServerHandle,int inputBitNumber,int outputMtbServerHandle,int outputBitNumber,int connectionType)"),LUA_CONNECT_INPUT_CALLBACK);
-    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMAND,"@","MTB"),strConCat("bool result=",LUA_DISCONNECT_INPUT_COMMAND,"(int inputMtbServerHandle,int inputBitNumber)"),LUA_DISCONNECT_INPUT_CALLBACK);
-
-    // Following for backward compatibility:
-    simRegisterScriptVariable(LUA_START_SERVER_COMMANDOLD,LUA_START_SERVER_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_START_SERVER_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_START_SERVER_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_STOP_SERVER_COMMANDOLD,LUA_STOP_SERVER_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STOP_SERVER_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_STOP_SERVER_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_STEP_COMMANDOLD,LUA_STEP_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_STEP_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_STEP_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_GET_JOINTS_COMMANDOLD,LUA_GET_JOINTS_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_JOINTS_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_GET_JOINTS_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_GET_OUTPUT_COMMANDOLD,LUA_GET_OUTPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_OUTPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_GET_OUTPUT_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_GET_INPUT_COMMANDOLD,LUA_GET_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_GET_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_GET_INPUT_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_SET_INPUT_COMMANDOLD,LUA_SET_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_SET_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_SET_INPUT_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_CONNECT_INPUT_COMMANDOLD,LUA_CONNECT_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_CONNECT_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_CONNECT_INPUT_COMMAND," notation instead"),0);
-    simRegisterScriptVariable(LUA_DISCONNECT_INPUT_COMMANDOLD,LUA_DISCONNECT_INPUT_COMMAND,-1);
-    simRegisterScriptCallbackFunction(strConCat(LUA_DISCONNECT_INPUT_COMMANDOLD,"@","MTB"),strConCat("Please use the ",LUA_DISCONNECT_INPUT_COMMAND," notation instead"),0);
+    simRegisterScriptCallbackFunction("startServer",nullptr,LUA_START_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction("stopServer",nullptr,LUA_STOP_SERVER_CALLBACK);
+    simRegisterScriptCallbackFunction("step",nullptr,LUA_STEP_CALLBACK);
+    simRegisterScriptCallbackFunction("getJoints",nullptr,LUA_GET_JOINTS_CALLBACK);
+    simRegisterScriptCallbackFunction("getOutput",nullptr,LUA_GET_OUTPUT_CALLBACK);
+    simRegisterScriptCallbackFunction("getInput",nullptr,LUA_GET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction("setInput",nullptr,LUA_SET_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction("connectInput",nullptr,LUA_CONNECT_INPUT_CALLBACK);
+    simRegisterScriptCallbackFunction("disconnectInput",nullptr,LUA_DISCONNECT_INPUT_CALLBACK);
 
     return(PLUGIN_VERSION);
 }
 
-SIM_DLLEXPORT void simEnd()
+SIM_DLLEXPORT void simCleanup()
 {
     unloadSimLibrary(simLib);
 }
 
-SIM_DLLEXPORT void* simMessage(int message,int* auxiliaryData,void*,int*)
+SIM_DLLEXPORT void simMsg(int message,int* auxData,void*)
 {
-    void* retVal=NULL;
-
     if (message==sim_message_eventcallback_scriptstatedestroyed)
     { // script state was destroyed. Destroy all associated server instances:
-        int index=getServerIndexFromScriptHandle(auxiliaryData[0]);
+        int index=getServerIndexFromScriptHandle(auxData[0]);
         while (index>=0)
         {
             allMtbServers.erase(allMtbServers.begin()+index);
-            index=getServerIndexFromScriptHandle(auxiliaryData[0]);
+            index=getServerIndexFromScriptHandle(auxData[0]);
         }
     }
-
-    return(retVal);
 }
 
