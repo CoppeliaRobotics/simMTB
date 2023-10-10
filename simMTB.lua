@@ -1,3 +1,3 @@
-local simMTB=loadPlugin'simMTB'
+local simMTB = loadPlugin'simMTB';
 
 return simMTB
