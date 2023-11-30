@@ -57,14 +57,14 @@ SOURCES += \
     ../include/simLib/scriptFunctionData.cpp \
     ../include/simLib/scriptFunctionDataItem.cpp \
     ../include/simLib/simLib.cpp \
-    simMTB.cpp
+    sourceCode/simMTB.cpp
 
 HEADERS +=\
     ../include/simLib/socketOutConnection.h \
     ../include/simLib/scriptFunctionData.h \
     ../include/simLib/scriptFunctionDataItem.h \
     ../include/simLib/simLib.h \
-    simMTB.h
+    sourceCode/simMTB.h
 
 unix:!symbian {
     maemo5 {
