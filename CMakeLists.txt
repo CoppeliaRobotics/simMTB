@@ -20,10 +20,10 @@ coppeliasim_add_plugin(
     simMTB
     LEGACY
     SOURCES
-    simMTB.cpp
+    sourceCode/simMTB.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simLib/socketOutConnection.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simLib/scriptFunctionData.cpp
     ${COPPELIASIM_INCLUDE_DIR}/simLib/scriptFunctionDataItem.cpp
 )
-coppeliasim_add_lua(simMTB.lua)
-coppeliasim_add_lua(simMTB-ce.lua)
+coppeliasim_add_lua(lua/simMTB.lua)
+coppeliasim_add_lua(lua/simMTB-ce.lua)
