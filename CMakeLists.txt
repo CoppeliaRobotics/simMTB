@@ -14,16 +14,13 @@ if(NOT COPPELIASIM_INCLUDE_DIR)
     endif()
 endif()
 list(APPEND CMAKE_MODULE_PATH ${COPPELIASIM_INCLUDE_DIR}/cmake)
-find_package(CoppeliaSim 4.5.1.7 REQUIRED)
+find_package(CoppeliaSim 4.5.1.7 REQUIRED COMPONENTS simLib-1 simLib-socket-1 simLib-scriptFunctionData-1)
 
 coppeliasim_add_plugin(
     simMTB
     LEGACY
     SOURCES
     sourceCode/simMTB.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simLib/socketOutConnection.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simLib/scriptFunctionData.cpp
-    ${COPPELIASIM_INCLUDE_DIR}/simLib/scriptFunctionDataItem.cpp
 )
 coppeliasim_add_lua(lua/simMTB.lua)
 coppeliasim_add_lua(lua/simMTB-ce.lua)
